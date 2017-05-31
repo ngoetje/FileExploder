@@ -20,6 +20,8 @@
         <converters:CountConverter x:Key="countConverter" />
         <converters:BooleanToVisibilityConverter x:Key="boolConverter" />
         <converters:LengthToStringConverter x:Key="lengthConverter"/>
+        
+        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -36,7 +38,35 @@
             <Button Command="{Binding RefreshDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="5">
                 <Image Source="/Icons/arrow_refresh.png" />
             </Button>
-            <TextBlock Visibility="{Binding Loading}">Loading..</TextBlock>
+
+            <Image Margin="5,0" Visibility="{Binding Loading}" Source="/Icons/hourglass.png">
+                <Image.RenderTransform>
+                    <RotateTransform CenterX="8" CenterY="8" />
+                </Image.RenderTransform>
+                <Image.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <Trigger Property="Image.IsEnabled" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.Angle"
+                                                From="0"
+                                                To="360"
+                                                Duration="0:0:1"
+                                                DecelerationRatio="0.3"
+                                                AccelerationRatio="0.3"
+                                                RepeatBehavior="Forever" />     
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+            
             <Button Command="{Binding AddDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="50,5,0,5">
                 <Image Source="/Icons/add.png" />
             </Button>

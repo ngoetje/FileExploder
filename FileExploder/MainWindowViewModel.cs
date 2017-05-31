@@ -63,8 +63,9 @@ namespace FileExploder
             foreach (var item in result)
             {
                 this.Entries[this.SelectedDirectory].Add(item);
-            }            
+            }
 
+            this.CrawlerResults.Clear();
             UpdateCrawlerResults(this.Entries[this.SelectedDirectory]);
 
             Loading = Visibility.Hidden;
@@ -110,7 +111,10 @@ namespace FileExploder
             {
                 foreach (var directory in directories)
                 {
-                    this.Entries.Add(directory, new ObservableCollection<CrawlerResult>());
+                    if (!this.Entries.ContainsKey(directory))
+                    {
+                        this.Entries.Add(directory, new ObservableCollection<CrawlerResult>());
+                    }
                 }
 
                 this.SelectedDirectory = this.Entries.Keys.First();
@@ -191,7 +195,7 @@ namespace FileExploder
             set
             {
                 loading = value;
-                RaisePropertyChanged("Visibility");
+                RaisePropertyChanged("Loading");
             }
         }
 
