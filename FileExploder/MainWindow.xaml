@@ -1,0 +1,97 @@
+﻿<Window x:Class="FileExploder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileExploder"
+        xmlns:converters="clr-namespace:FileExploder.Ui.Infrastructure.Converters;assembly=FileExploder.Ui.Infrastructure"
+        xmlns:extenders="clr-namespace:FileExploder.Ui.Infrastructure.Extenders;assembly=FileExploder.Ui.Infrastructure"
+        mc:Ignorable="d"     
+        Icon="/Icons/bomb.png"
+        Title="FileExploder" Height="550" Width="640"> 
+    <Window.Resources>
+        <DataTemplate x:Key="comboBoxItemTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Path}" />
+                <TextBlock Text="{Binding FileExtension}" />
+            </StackPanel>
+        </DataTemplate>
+        <converters:CountConverter x:Key="countConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="boolConverter" />
+        <converters:LengthToStringConverter x:Key="lengthConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" MinWidth="15"/>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding Entries.Keys, TargetNullValue=Blubb}" SelectedItem="{Binding SelectedDirectory, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, TargetNullValue=Blubb}"  Width="250" Margin="5" ItemTemplate="{StaticResource comboBoxItemTemplate}" />
+            <Button Command="{Binding RefreshDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="5">
+                <Image Source="/Icons/arrow_refresh.png" />
+            </Button>
+            <TextBlock Visibility="{Binding Loading}">Loading..</TextBlock>
+            <Button Command="{Binding AddDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="50,5,0,5">
+                <Image Source="/Icons/add.png" />
+            </Button>
+            <Button Command="{Binding RemoveDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="5">
+                <Image Source="/Icons/delete.png" />
+            </Button>
+        </StackPanel>
+        <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"  />
+
+        <ListBox x:Name="titleListbox" 
+                 Tag="{Binding}" 
+                 Grid.Row="1" 
+                 Grid.Column="0" 
+                 TextSearch.TextPath="Title"  
+                 ItemsSource="{Binding CrawlerResults}" 
+                 SelectionMode="Single" 
+                 HorizontalContentAlignment="Left" 
+                 VerticalContentAlignment="Center" 
+                 SelectedItem="{Binding SelectedCrawlerResult, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}"
+                 IsSynchronizedWithCurrentItem="True"
+                 extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid x:Name="ItemGrid" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Title}" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="{Binding Files, Converter={StaticResource countConverter}}" Grid.Row="1" Grid.Column="0" FontStyle="Italic"/>
+                        <Button HorizontalAlignment="Right" Width="75" Grid.RowSpan="2" Grid.Column="1" Command="{Binding Path=Tag.OpenExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Visibility="{Binding RelativeSource={RelativeSource  AncestorType=ListBoxItem, Mode=FindAncestor}, Path=IsMouseOver, Converter={StaticResource boolConverter}}">
+                            <Image Source="/Icons/folder_go.png" StretchDirection="DownOnly"/>
+                        </Button>
+                    </Grid>
+                    
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox Grid.Row="1" Grid.Column="2" TextSearch.TextPath="Name" ItemsSource="{Binding SelectedCrawlerResult.Files}" SelectionMode="Single" HorizontalContentAlignment="Left" VerticalContentAlignment="Center">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" >
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Length, Converter={StaticResource lengthConverter}, ConverterParameter={x:Static converters:LengthConverterTargetEnum.MB}}" Margin="5,5,0,5" FontStyle="Italic"/>
+                    </StackPanel>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+    </Grid>
+</Window>

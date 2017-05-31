@@ -1,0 +1,43 @@
+﻿<Window x:Class="FileExploder.DirectoryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileExploder"
+        mc:Ignorable="d"
+        Icon="/Icons/folder_add.png"
+        d:DataContext="{d:DesignInstance local:DirectoryDialogViewModel}"
+        WindowStyle="SingleBorderWindow"
+        Title="Add Directory" Height="175" Width="300">
+    <Grid Margin="0,5,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Name:"  />
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Path:"  />
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="File Extension:"  />
+
+        <TextBox Grid.Row="0" Grid.Column="2" Margin="5" Text="{Binding Directory.Name}" />
+        <TextBox Grid.Row="1" Grid.Column="2" Margin="5" Text="{Binding Directory.Path}" />
+        <TextBox Grid.Row="2" Grid.Column="2" Margin="5" Text="{Binding Directory.FileExtension}" />
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5" MinWidth="50" Command="{Binding OkCommand}">
+                <Image Source="/Icons/accept.png" />
+            </Button>
+            <Button Margin="5" MinWidth="50" Command="{Binding CancelCommand}" IsCancel="True">
+                <Image Source="/Icons/cancel.png" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>
