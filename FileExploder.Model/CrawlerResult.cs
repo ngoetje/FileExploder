@@ -20,6 +20,13 @@ namespace FileExploder.Model
             this.Files = this.Directory.GetFiles(fileExtension, SearchOption.AllDirectories)
                 .OrderBy(fi => fi.Name)
                 .ToList();
+
+
+            if (File.Exists(this.Directory.FullName + @"\poster.jpg"))
+            {
+                this.Poster = this.Directory.GetFiles("poster.jpg", SearchOption.TopDirectoryOnly).FirstOrDefault().FullName;
+            }
+            
         }
 
         //public override String ToString()
@@ -44,5 +51,7 @@ namespace FileExploder.Model
         public String Title { get; set; }
         public DirectoryInfo Directory { get; set; }
         public List<FileInfo> Files { get; set; }
+
+        public String Poster { get; set; }
     }
 }
