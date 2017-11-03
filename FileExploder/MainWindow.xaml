@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:FileExploder"
         xmlns:converters="clr-namespace:FileExploder.Ui.Infrastructure.Converters;assembly=FileExploder.Ui.Infrastructure"
         xmlns:extenders="clr-namespace:FileExploder.Ui.Infrastructure.Extenders;assembly=FileExploder.Ui.Infrastructure"
-        mc:Ignorable="d"     
+        mc:Ignorable="d" 
+        d:DataContext="{x:Type local:MainWindowViewModel}"
         Icon="/Icons/bomb.png"
         Title="FileExploder" Height="550" Width="640"> 
     <Window.Resources>
@@ -20,13 +21,44 @@
         <converters:CountConverter x:Key="countConverter" />
         <converters:BooleanToVisibilityConverter x:Key="boolConverter" />
         <converters:LengthToStringConverter x:Key="lengthConverter"/>
-        
-        
+        <Style TargetType="Button">
+            <!--x:Key="IconButtonStyle"-->
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid x:Name="grid" Background="{TemplateBinding Background}">
+                            <Border x:Name="bd" >
+                            <!--<Ellipse Fill="{TemplateBinding Background}"
+                                     Stroke="{TemplateBinding BorderBrush}"/>-->
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" 
+                                                  Margin="2"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger SourceName="grid" Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="LightGray"/>
+                            </Trigger>
+                            <!--<EventTrigger RoutedEvent="Click" SourceName="grid" >
+                                <Setter TargetName="bd" Property="Background" Value="LightGray"/>
+                            </EventTrigger>-->
+                        
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate> 
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="30"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -35,8 +67,9 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal">
             <ComboBox ItemsSource="{Binding Entries.Keys, TargetNullValue=Blubb}" SelectedItem="{Binding SelectedDirectory, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, TargetNullValue=Blubb}"  Width="250" Margin="5" ItemTemplate="{StaticResource comboBoxItemTemplate}" />
-            <Button Command="{Binding RefreshDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="5">
-                <Image Source="/Icons/arrow_refresh.png" />
+            
+            <Button Command="{Binding RefreshDirectoryCommand}" Margin="5">
+                <Image Source="/Icons/arrow_refresh.png"  />
             </Button>
 
             <Image Margin="5,0" Visibility="{Binding Loading}" Source="/Icons/hourglass.png">
@@ -67,10 +100,13 @@
                 </Image.Style>
             </Image>
             
-            <Button Command="{Binding AddDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="50,5,0,5">
+            <Button Command="{Binding AddDirectoryCommand}" Margin="50,5,0,5">
                 <Image Source="/Icons/add.png" />
             </Button>
-            <Button Command="{Binding RemoveDirectoryCommand}" MinWidth="50" MinHeight="25" Margin="5">
+            <Button Command="{Binding EditDirectoryCommand}" Margin="5">
+                <Image Source="/Icons/folder_edit.png" />
+            </Button>
+            <Button Command="{Binding RemoveDirectoryCommand}" Margin="5">
                 <Image Source="/Icons/delete.png" />
             </Button>
         </StackPanel>
@@ -91,7 +127,8 @@
             
             <ListBox.ItemTemplate>
                 <DataTemplate >
-                    <Grid x:Name="ItemGrid" HorizontalAlignment="Stretch" MinHeight="94">
+                    <!--MinHeight="94"-->
+                    <Grid x:Name="ItemGrid" HorizontalAlignment="Stretch" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="64" />
                             <ColumnDefinition Width="250" />
@@ -109,8 +146,12 @@
                               HorizontalAlignment="Center" />
                         <TextBlock Text="{Binding Title}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"/>
                         <TextBlock Text="{Binding Files, Converter={StaticResource countConverter}}" Grid.Row="1" Grid.Column="1" FontStyle="Italic" VerticalAlignment="Top"/>
-                        <Button HorizontalAlignment="Right" Width="75" Grid.RowSpan="2" Grid.Column="1" Command="{Binding Path=Tag.OpenExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Visibility="{Binding RelativeSource={RelativeSource  AncestorType=ListBoxItem, Mode=FindAncestor}, Path=IsMouseOver, Converter={StaticResource boolConverter}}">
+                        
+                        <Button HorizontalAlignment="Right"  Grid.RowSpan="2" Grid.Column="1" Command="{Binding Path=Tag.OpenExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Visibility="{Binding RelativeSource={RelativeSource  AncestorType=ListBoxItem, Mode=FindAncestor}, Path=IsMouseOver, Converter={StaticResource boolConverter}}">
                             <Image Source="/Icons/folder_go.png" StretchDirection="DownOnly"/>
+                        </Button>
+                        <Button HorizontalAlignment="Left"  Grid.RowSpan="2" Grid.Column="2" Margin="5,0" Command="{Binding Path=Tag.CopyPathCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Visibility="{Binding RelativeSource={RelativeSource  AncestorType=ListBoxItem, Mode=FindAncestor}, Path=IsMouseOver, Converter={StaticResource boolConverter}}">
+                            <Image Source="/Icons/paste_plain.png" StretchDirection="DownOnly"/>
                         </Button>
                     </Grid>
                     
@@ -129,6 +170,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+        <TextBlock Grid.Row="2" Text="{Binding Error}" Foreground="Red"/>
     </Grid>
 </Window>
+

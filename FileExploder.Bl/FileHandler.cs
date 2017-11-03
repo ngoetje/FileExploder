@@ -42,24 +42,26 @@ namespace FileExploder.Bl
             }
             else
             {
-                UpdateXmlFile(fileName, directories);
+                File.Delete(fileName);
+                CreateXmlFile(fileName, directories);
+                //UpdateXmlFile(fileName, directories);
             }
         }
 
-        private static void UpdateXmlFile(string fileName, IEnumerable<CrawlerDirectory> directories)
-        {
-            XElement dirs = XElement.Load(fileName);
+        //private static void UpdateXmlFile(string fileName, IEnumerable<CrawlerDirectory> directories)
+        //{
+        //    XElement dirs = XElement.Load(fileName);
             
-            foreach (var item in directories)
-            {
-                // add update functionality
-                dirs.Add(new XElement("CrawlerDirectory", new XElement("Path", item.Path), new XElement("Name", item.Name), new XElement("FileExtension", item.FileExtension)));
-            }
-            //dataElements.Element("CrawlerDirectory").Element("name").ReplaceNodes(textBox1.Text);
-            //dataElements.Element("CrawlerDirectory").Element("password").ReplaceNodes(textBox2.Text);
-            //// Save the file
-            dirs.Save(fileName);
-        }
+        //    foreach (var item in directories)
+        //    {
+        //        // add update functionality
+        //        dirs.Add(new XElement("CrawlerDirectory", new XElement("Path", item.Path), new XElement("Name", item.Name), new XElement("FileExtension", item.FileExtension)));
+        //    }
+        //    //dataElements.Element("CrawlerDirectory").Element("name").ReplaceNodes(textBox1.Text);
+        //    //dataElements.Element("CrawlerDirectory").Element("password").ReplaceNodes(textBox2.Text);
+        //    //// Save the file
+        //    dirs.Save(fileName);
+        //}
 
         private static void CreateXmlFile(String fileName, IEnumerable<CrawlerDirectory> directories)
         {

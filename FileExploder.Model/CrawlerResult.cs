@@ -53,5 +53,7 @@ namespace FileExploder.Model
         public List<FileInfo> Files { get; set; }
 
         public String Poster { get; set; }
+
+        public String Error { get; set; }
     }
 }
